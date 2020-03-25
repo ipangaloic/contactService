@@ -40,16 +40,16 @@ public class ContactService {
 		addressentity.setContact(entity);
 		entity.setAddress(addressentity);
 
-		List<PhoneEntity> phoneentity = new ArrayList<PhoneEntity>();
+		List<PhoneEntity> entityphone = new ArrayList<PhoneEntity>();
 		List<PhoneDto> phonedto = dto.getPhone();
 
 		for (PhoneDto phone : phonedto) {
-			PhoneEntity entity11 = new PhoneEntity();
-			entity11.setNumber(phone.getNumber());
-			entity11.setType(phone.getType());
-			entity11.setContact(entity);
+			PhoneEntity entity = new PhoneEntity();
+			entity.setNumber(phone.getNumber());
+			entity.setType(phone.getType());
+			entity.setContact(entity);
 
-			phoneentity.add(entity11);
+			entityphone.add(entity);
 		}
 		entity.setPhone(phoneentity);
 		entity.setEmail(dto.getEmail());
