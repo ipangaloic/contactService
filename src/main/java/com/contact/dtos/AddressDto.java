@@ -9,13 +9,13 @@ public class AddressDto {
 	public String state;
 	public  String zip;
 	
-	public AddressDto( String street, String city, String state, String zip) {
+	/*public AddressDto( String street, String city, String state, String zip) {
 		
 		this.street = street;
 		this.city = city;
 		this.state = state;
 		this.zip = zip;
-	}
+	}*/
 
 	public String getStreet() {
 		return street;

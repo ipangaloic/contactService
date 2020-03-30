@@ -2,6 +2,8 @@ package com.contact.services;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,111 +20,180 @@ import com.contact.repositories.ContactRepository;
 @Service
 public class ContactService {
 	@Autowired
-	private ContactRepository contactrepository;
-
-	public void createContact(ContactDto dto) {
-		ContactEntity entity = new ContactEntity();
+	private ContactRepository contactRepository;
 	
-		NameEntity nameentity = new NameEntity();
-		NameDto namedto = dto.getName();
-		nameentity.setFirst(namedto.getFirst());
-		nameentity.setMiddle(namedto.getMiddle());
-		nameentity.setLast(namedto.getLast());
-		nameentity.setContact(entity);
-		entity.setName(nameentity);
-
-		AddressEntity addressentity = new AddressEntity();
-		AddressDto addressdto = dto.getAddress();
-		addressentity.setStreet(addressdto.getStreet());
-		addressentity.setCity(addressdto.getCity());
-		addressentity.setState(addressdto.getState());
-		addressentity.setZip(addressdto.getZip());
-		addressentity.setContact(entity);
-		entity.setAddress(addressentity);
-
-		List<PhoneEntity> entityphone = new ArrayList<PhoneEntity>();
-		List<PhoneDto> phonedto = dto.getPhone();
-
-		for (PhoneDto phone : phonedto) {
-			PhoneEntity entity = new PhoneEntity();
-			entity.setNumber(phone.getNumber());
-			entity.setType(phone.getType());
-			entity.setContact(entity);
-
-			entityphone.add(entity);
+	public void createContactInfo(ContactDto contactDto) {
+		
+		ContactEntity contact = new ContactEntity();
+		contact.setEmail(contactDto.getEmail());
+		
+		NameDto nameDto = contactDto.getName();
+		NameEntity nameEntity = new NameEntity();
+		
+		nameEntity.setFirst(nameDto.getFirst());
+		nameEntity.setMiddle(nameDto.getMiddle());
+		nameEntity.setLast(nameDto.getLast());
+		
+		nameEntity.setContact(contact);
+		
+		AddressDto addressDto = contactDto.getAddress();
+		AddressEntity addressObj = new AddressEntity();
+		
+		addressObj.setStreet(addressDto.getStreet());
+		addressObj.setCity(addressDto.getCity());
+		addressObj.setState(addressDto.getState());
+		addressObj.setZip(addressDto.getZip());
+		addressObj.setContact(contact);
+		contact.setAddress(addressObj);
+		
+		List<PhoneDto> phoneDto = contactDto.getPhone();
+		
+		List<PhoneEntity> phoneEntities = new ArrayList<PhoneEntity>();
+		for (PhoneDto p : phoneDto) {
+			
+			PhoneEntity phoneEntity = new PhoneEntity();
+			phoneEntity.setNumber(p.getNumber());
+			phoneEntity.setType(p.getType());
+			phoneEntity.setContact(contact);
+			contact.setPhone(phoneEntities);
+			phoneEntities.add(phoneEntity);
+			
+			contactRepository.save(contact);
+			
 		}
-		entity.setPhone(phoneentity);
-		entity.setEmail(dto.getEmail());
-
-		contactrepository.save(entity);
-
-	}
-}
-
-
-}
-
-	public void create(ContactDto dto) {
-		ContactDto.add(dto);
 	}
 
-	public ContactDto getById(Integer id) {
-		for (ContactDto c : contact) {
-			Integer i = c.getId();
-			if (i == id) {
-				return c;
+	public ContactDto getContact(int id) {
+		
+		Optional<ContactEntity> contact = contactRepository.findById(id);
+
+		ContactDto contactDto = null;
+
+		if (contact.isPresent()) {
+			contactDto = new ContactDto();
+			contactDto.setEmail(contact.get().getEmail());
+
+			NameEntity nameEntity = contact.get().getName();
+			NameDto nameDto = new NameDto();
+			nameDto.setFirst(nameEntity.getFirst());
+			nameDto.setMiddle(nameEntity.getMiddle());
+			nameDto.setLast(nameEntity.getLast());
+			contactDto.setName(nameDto);
+
+			AddressEntity addressEntity = contact.get().getAddress();
+			AddressDto addressDto = new AddressDto();
+			addressDto.setStreet(addressEntity.getStreet());
+			addressDto.setCity(addressEntity.getCity());
+			addressDto.setState(addressEntity.getState());
+			addressDto.setZip(addressEntity.getZip());
+			contactDto.setAddress(addressDto);
+
+			List<PhoneEntity> phoneEntity = contact.get().getPhone();
+
+			List<PhoneDto> phoneDto = new ArrayList<PhoneDto>();
+
+			for (PhoneEntity p : phoneEntity) {
+				PhoneDto phoneDtos = new PhoneDto();
+				phoneDtos.setNumber(p.getNumber());
+				phoneDtos.setType(p.getType());
+				phoneDto.add(phoneDtos);
+				contactDto.setPhone(phoneDto);
+
+			}
+		}
+		return contactDto;
+	}
+		
+	public List<ContactDto> getAllContacts() {
+		Iterable<ContactEntity> contact= contactRepository.findAll();
+
+		List<ContactDto> contactDto = new ArrayList<ContactDto>();
+		for (ContactEntity m : contact) {
+			ContactDto mainDto = new ContactDto();
+			mainDto.setEmail(m.getEmail());
+
+			NameEntity nameEntity = m.getName();
+			NameDto nameDto = new NameDto();
+			nameDto.setFirst(nameEntity.getFirst());
+			nameDto.setLast(nameEntity.getLast());
+			nameDto.setMiddle(nameEntity.getMiddle());
+			mainDto.setName(nameDto);
+
+			AddressEntity addressEntity = m.getAddress();
+			AddressDto addressDto = new AddressDto();
+			addressDto.setStreet(addressEntity.getStreet());
+			addressDto.setCity(addressEntity.getCity());
+			addressDto.setState(addressEntity.getState());
+			addressDto.setZip(addressEntity.getZip());
+			mainDto.setAddress(addressDto);
+
+			List<PhoneEntity> phoneEntity = m.getPhone();
+			List<PhoneDto> phoneDtos = new ArrayList<PhoneDto>();
+			if (phoneEntity != null) {
+				for (PhoneEntity p : phoneEntity) {
+					PhoneDto phoneDto = new PhoneDto();
+					phoneDto.setNumber(p.getNumber());
+					phoneDto.setType(p.getType());
+					phoneDtos.add(phoneDto);
+					mainDto.setPhone(phoneDtos);
+				}
+
+				contactDto.add(mainDto);
+
 			}
 
 		}
-		return null;
+		return contactDto;
+
 	}
-	
-	public List<ContactDto> deleteById(Integer id) {
-		for (ContactDto c : contact) {
-			if (c.getId()==id) {
-				contact.remove(c);
+
+	public void updateContacts(int id, ContactDto mainContactDto) {
+		Optional<ContactEntity> contact = contactRepository.findById(id);
+		if (contact.isPresent()) {
+			ContactEntity mainContactEntity2 = contact.get();
+			mainContactEntity2.setEmail(mainContactDto.getEmail());
+			
+			NameEntity nameEntity = mainContactEntity2.getName();
+			NameDto nameDto = mainContactDto.getName();
+			nameEntity.setFirst(nameDto.getFirst());
+			nameEntity.setMiddle(nameDto.getMiddle());
+			nameEntity.setLast(nameDto.getLast());
+			nameEntity.setContact(mainContactEntity2);
+			mainContactEntity2.setName(nameEntity);
+
+			AddressEntity addressEntity = mainContactEntity2.getAddress();
+			AddressDto addressDto = mainContactDto.getAddress();
+			addressEntity.setStreet(addressDto.getStreet());
+			addressEntity.setState(addressDto.getState());
+			addressEntity.setCity(addressDto.getCity());
+			addressEntity.setZip(addressDto.getZip());
+			addressEntity.setContact(mainContactEntity2);
+			mainContactEntity2.setAddress(addressEntity);
+
+			List<PhoneEntity> phoneEntities = mainContactEntity2.getPhone();
+			List<PhoneDto> phoneDtos = mainContactDto.getPhone();
+
+			if (phoneDtos != null) {
+				for (PhoneDto p : phoneDtos) {
+					if(phoneEntities == null) {
+					PhoneEntity phoneEntity = new PhoneEntity();
+					phoneEntity.setNumber(p.getNumber());
+					phoneEntity.setType(p.getType());
+					phoneEntity.setContact(mainContactEntity2);
+					phoneEntities.add(phoneEntity);
+
+					mainContactEntity2.setPhone(phoneEntities);
+					}
+					
+					else {
+						
+						mainContactEntity2.setPhone(phoneEntities);
+					}
+				}
 			}
+			contactRepository.save(mainContactEntity2);
 		}
-	return contact;
+
 	}
-	
+
 }
-
-
-//Previous code for calling my APIs
-/*List <ContactDto> contact;
-public List<ContactDto> getContactDetails(ContactDto contactDto) {
-	contact = new ArrayList<ContactDto>();
-	
-	NameDto name = new NameDto();
-	name.setFirst("Loic");
-	name.setLast("Ipanga");
-	name.setMiddle("Nyeka");
-	AddressDto address = new AddressDto("Second Street", "Delhi", "NCR", "22042");
-	PhoneDto phone = new PhoneDto("5717333413", "mobile");
-	
-	ContactDto c1 = new ContactDto();
-	c1.setId(1);
-	c1.setName(name);
-	c1.setPhone(phone);
-	c1.setAddress(address);
-	c1.setEmail("ipangaloic@email.com");
-	contact.add(c1);
-	
-	NameDto name2 = new NameDto();
-	name2.setFirst("Friend");
-	name2.setLast("Best");
-	name2.setMiddle("Forever");
-	
-	AddressDto address2 = new AddressDto("Third Street", "Reston", "Virginia", "22042");
-	PhoneDto phone2 = new PhoneDto("5717334747", "mobile");
-	
-	ContactDto c2 = new ContactDto();
-	c2.setId(2);
-	c2.setName(name2);
-	c2.setPhone(phone2);
-	c2.setAddress(address2);
-	c2.setEmail("restonprogramc@email.com");
-	contact.add(c2);
-	
-	return contact;*/

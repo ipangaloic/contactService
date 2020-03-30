@@ -1,6 +1,7 @@
 package com.contact.dtos;
 
 import java.io.Serializable;
+import java.util.List;
 
 public class ContactDto implements Serializable {
 	
@@ -9,9 +10,8 @@ public class ContactDto implements Serializable {
 	public Integer id;
 	public NameDto name;
 	public AddressDto address;
-	public PhoneDto phone;
+	public List<PhoneDto> phone;
 	private String email;
-	
 	
 	public Integer getId() {
 		return id;
@@ -31,10 +31,10 @@ public class ContactDto implements Serializable {
 	public void setAddress(AddressDto address) {
 		this.address = address;
 	}
-	public PhoneDto getPhone() {
+	public List<PhoneDto> getPhone() {
 		return phone;
 	}
-	public void setPhone(PhoneDto phone) {
+	public void setPhone(List<PhoneDto> phone) {
 		this.phone = phone;
 	}
 	public String getEmail() {
@@ -44,14 +44,6 @@ public class ContactDto implements Serializable {
 		this.email = email;
 	}
 	
-	
-	@Override
-	public String toString() {
-		return "ContactDto [id=" + id + ", name=" + name + ", address=" + address + ", phone=" + phone + ", email="
-				+ email + "]";
-	}
-	
 
-	
-	
+
 }

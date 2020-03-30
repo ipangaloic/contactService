@@ -22,25 +22,27 @@ public class ContactController {
 	private ContactService contactService;
 	
 	@GetMapping(value= "")
-	public List<ContactDto> getcontact(ContactDto contactDto) {
-		return contactService.getContactDetails(contactDto);
+	public List<ContactDto> getAll() {
+		return contactService.getAllContacts();
 	}
 	
 	@PostMapping(value ="/post")
-	public void createContact(@RequestBody ContactDto dto) {
-		System.out.println(dto);
+	public void createContact(@RequestBody ContactDto contactDto) {
+		contactService.createContactInfo(contactDto);;
 	}
 	
 	@GetMapping(value = "/{id}")
 	public ContactDto getById(@PathVariable("id") Integer id) {
-		return contactService.getById(id);
+		return contactService.getContact(id);
 	}
 	
-	@DeleteMapping(value="/delete")
+	/*@DeleteMapping(value="/delete")
 	public List<ContactDto> deleteById(@PathVariable("id") Integer id) {
 		return contactService.deleteById(id);
 	}
 	
-	
-	
+	@PutMapping(value = "/{id}") 
+	public void updateById(@PathVariable("id") int id, @RequestBody ContactDto mainContactDto) {
+	contactService.updateContacts(id, mainContactDto);*/
 }
+
