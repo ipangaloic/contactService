@@ -44,10 +44,10 @@ public class ContactService {
 		List<PhoneDto> phonedto = dto.getPhone();
 
 		for (PhoneDto phone : phonedto) {
-			PhoneEntity entity11 = new PhoneEntity();
-			entity11.setNumber(phone.getNumber());
-			entity11.setType(phone.getType());
-			entity11.setContact(entity);
+			PhoneEntity entity = new PhoneEntity();
+			entity.setNumber(phone.getNumber());
+			entity.setType(phone.getType());
+			entity.setContact(entity);
 
 			phoneentity.add(entity11);
 		}
