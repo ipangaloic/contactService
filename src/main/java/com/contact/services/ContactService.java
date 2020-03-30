@@ -40,7 +40,7 @@ public class ContactService {
 		addressentity.setContact(entity);
 		entity.setAddress(addressentity);
 
-		List<PhoneEntity> phoneentity = new ArrayList<PhoneEntity>();
+		List<PhoneEntity> entityphone = new ArrayList<PhoneEntity>();
 		List<PhoneDto> phonedto = dto.getPhone();
 
 		for (PhoneDto phone : phonedto) {
@@ -49,7 +49,7 @@ public class ContactService {
 			entity.setType(phone.getType());
 			entity.setContact(entity);
 
-			phoneentity.add(entity11);
+			entityphone.add(entity);
 		}
 		entity.setPhone(phoneentity);
 		entity.setEmail(dto.getEmail());
